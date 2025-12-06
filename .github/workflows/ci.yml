@@ -1,5 +1,4 @@
-
-name: CI Pipeline
+name: CI Pipeline (Node + Python)
 
 on:
   push:
@@ -8,21 +7,42 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  node-ci:
+    name: Node App CI
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: "18"
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install Node dependencies
+        run: cd node-app && npm install
 
-    - name: Run tests
-      run: npm test
-    
+      - name: Run Node tests
+        run: cd node-app && npm test
+
+      - name: Build Node Docker image
+        run: docker build -t node-app ./node-app
+
+  python-ci:
+    name: Python App CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install Python dependencies
+        run: cd python-app && pip install -r requirements.txt
+
+      - name: Build Python Docker image
+        run: docker build -t python-app ./python-app
+ 
