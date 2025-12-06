@@ -48,12 +48,21 @@ jobs:
         run: docker build -t python-app ./python-app
 
 
-  deploy:
-    name: Deploy to Render
+  deploy-node:
     runs-on: ubuntu-latest
-    needs: [node-ci, python-ci]  # Run only if CI succeeded
-
+    needs: [node-ci]
     steps:
-      - name: Trigger Render Deployment
-        run: |
-          curl -X POST "$RENDER_DEPLOY_HOOK"
+      - name: Deploy Node App
+        run: curl -X POST "$RENDER_NODE_HOOK"
+        env:
+          RENDER_NODE_HOOK: ${{ secrets.RENDER_NODE_HOOK }}
+
+  deploy-python:
+    runs-on: ubuntu-latest
+    needs: [python-ci]
+    steps:
+      - name: Deploy Python App
+        run: curl -X POST "$RENDER_PYTHON_HOOK"
+        env:
+          RENDER_PYTHON_HOOK: ${{ secrets.RENDER_PYTHON_HOOK }}
+
