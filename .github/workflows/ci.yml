@@ -45,4 +45,14 @@ jobs:
 
       - name: Build Python Docker image
         run: docker build -t python-app ./python-app
- 
+    deploy:
+    runs-on: ubuntu-latest
+    needs: [node-ci, python-ci]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy using Docker Compose
+        run: |
+          echo "Simulating deployment step"
+
